@@ -6,6 +6,8 @@ import * as serviceWorker from './serviceWorker';
 import 'keyrune';
 import 'mana-font';
 import './index.css';
+//import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 ReactDOM.render(
   <React.StrictMode>
