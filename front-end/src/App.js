@@ -2,10 +2,12 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import LoginView from './app/views/auth/login-view';
 import DashBoardView from './app/views/dashboard/dashboard-view';
+import Header from './app/components/header/header';
 
 export default function App() {
   return <>
     <BrowserRouter>
+      <Header></Header>
       <Switch>
         <Route exact path="/" component={DashBoardView} />
         <Route path="/login" component={LoginView} />
