@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from 'react-bootstrap/card';
 
-class DecksComponent extends React.Component {
+class DecksView extends React.Component {
     constructor(props) {
       super(props);
       this.state = {};
@@ -20,4 +20,4 @@ class DecksComponent extends React.Component {
     }
 }
 
-export default DecksComponent;
+export default DecksView;
