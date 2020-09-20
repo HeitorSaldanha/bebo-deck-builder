@@ -6,14 +6,13 @@ import * as serviceWorker from './serviceWorker';
 import 'keyrune';
 import 'mana-font';
 import './index.css';
-//import 'bootstrap/dist/css/bootstrap.min.css';
-
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change
