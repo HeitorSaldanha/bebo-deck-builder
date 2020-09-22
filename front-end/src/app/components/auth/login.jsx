@@ -20,18 +20,17 @@ const LoginComponent = () => {
     e.preventDefault();
 
     try {
-      const loginRes = await Axios.post(
-        'http://localhost:5000/users/login',
+      const { data } = await Axios.post(
+        '/users/login',
         {
           email,
           password,
         },
       );
       setUserData({
-        token: loginRes.data.token,
-        user: loginRes.data.user,
+        token: data.token,
+        user: data.user,
       });
-      localStorage.setItem('auth-token', loginRes.data.token);
       history.push('/');
     } catch (err) {
       if (err.response.data.msg) {

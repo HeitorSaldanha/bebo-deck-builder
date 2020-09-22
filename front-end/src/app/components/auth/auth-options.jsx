@@ -11,7 +11,6 @@ const AuthOptions = () => {
       token: undefined,
       user: undefined,
     });
-    localStorage.setItem('auth-token', '');
   };
 
   return (

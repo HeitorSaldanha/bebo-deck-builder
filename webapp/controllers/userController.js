@@ -59,6 +59,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+    res.cookie('token', token, { httpOnly: true });
     res.status(202).json({
       token,
       user: {
@@ -80,9 +81,9 @@ router.delete('/', auth, async (req, res) => {
   }
 });
 
-router.post('/tokenIsValid', async (req, res) => {
+router.get('/tokenIsValid', async (req, res) => {
   try {
-    const token = req.header('x-auth-token');
+    const token = req.cookies.token;
     if(!token) {
       return res.json(false);
     } else {

@@ -5,7 +5,7 @@ import Axios from 'axios';
 import Container from 'react-bootstrap/Container';
 
 import AuthView from './app/views/auth/auth-view';
-import HomeView from './app/views/home/home-view';
+import DecksView from './app/views/decks/decks-view';
 import TopNav from './app/components/top-nav/top-nav';
 import UserContext from './context/user-context';
 
@@ -17,36 +17,21 @@ export default function App() {
 
   useEffect(() => {
     const checkLoggedIn = async () => {
-      let token = localStorage.getItem('auth-token');
-      if (token === null) {
-        localStorage.setItem('auth-token', '');
-        token = '';
-      }
-      const tokenRes = await Axios.post(
-        'http://localhost:5000/users/tokenIsValid',
-        null,
-        {
-          headers: {
-            'x-auth-token': token,
-          },
-        },
-      );
+      const tokenRes = await Axios.get('/users/tokenIsValid');
       if (tokenRes.data) {
-        const userRes = await Axios.get(
-          'http://localhost:5000/users/',
-          {
-            headers: {
-              'x-auth-token': token,
-            },
-          },
-        );
+        const userRes = await Axios.get('/users/');
         setUserData({
-          token,
           user: userRes.data,
         });
       }
     };
 
+    const getCsrfToken = async () => {
+      const { data } = await Axios.get('/csrf-token');
+      Axios.defaults.headers.post['X-CSRF-Token'] = data.csrfToken;
+    };
+
+    getCsrfToken();
     checkLoggedIn();
   }, []);
 
@@ -63,10 +48,10 @@ export default function App() {
           <TopNav />
           <Container
             fluid
-            style={{ paddingTop: '50px' }}
+            style={{ padding: '50px' }}
           >
             <Switch>
-              <Route exact path="/" component={HomeView} />
+              <Route exact path="/" component={DecksView} />
               <Route path="/auth" component={AuthView} />
             </Switch>
           </Container>

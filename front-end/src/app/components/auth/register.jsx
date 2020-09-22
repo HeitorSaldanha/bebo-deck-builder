@@ -29,11 +29,11 @@ const RegisterComponent = () => {
         passwordCheck,
       };
       await Axios.post(
-        'http://localhost:5000/users/register',
+        '/users/register',
         newUser,
       );
       const loginRes = await Axios.post(
-        'http://localhost:5000/users/login',
+        '/users/login',
         {
           email,
           password,
@@ -43,7 +43,6 @@ const RegisterComponent = () => {
         token: loginRes.data.token,
         user: loginRes.data.user,
       });
-      localStorage.setItem('auth-token', loginRes.data.token);
       history.push('/');
     } catch (err) {
       if (err.response.data.msg) {
