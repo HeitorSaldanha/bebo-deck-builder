@@ -1,10 +1,14 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import Table from 'react-bootstrap/Table';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import CardSearch from '../../components/card-search/card-search';
+import CardList from '../../components/card-list/card-list';
+import deckBuilderContext from '../../../context/deck-builder-context';
 
 const DecksView = () => {
   /* const { userData } = useContext(UserContext);
@@ -15,75 +19,53 @@ const DecksView = () => {
     }
   }); */
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [deckBuilderData, setDeckBuilderData] = useState({
+      selectedCard: {}
+  });
 
-  const handleSearch = (query) => {
-    setIsLoading(true);
-
-    fetch(`https://api.scryfall.com/cards/search?q=${query}`)
-      .then((resp) => resp.json())
-      .then((result) => {
-        let options = [];
-        if (result.object !== 'error') {
-          options = result.data.map((i) => {
-            const card = {
-              name: i.name,
-              id: i.id,
-              image: '',
-            };
-
-            if (i.image_uris) {
-              card.image = i.image_uris.art_crop;
-            } else if (i.card_faces) {
-              card.image = i.card_faces[0].image_uris.art_crop;
-            }
-
-            return card;
-          });
-        }
-
-        setOptions(options);
-        setIsLoading(false);
-      });
-  };
+  const cardImageUri = () => {
+    if (deckBuilderData.selectedCard.image_uris) {
+      return deckBuilderData.selectedCard.image_uris.art_crop;
+    } else if (deckBuilderData.selectedCard.card_faces) {
+      return deckBuilderData.selectedCard.card_faces[0].image_uris.art_crop;
+    }
+  }
 
   return (
     <>
-      <h1>Decks</h1>
-      <Card>
-        <CardSearch />
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Format</th>
-              <th>Color Identity</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td colSpan="2">Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
-          </tbody>
-        </Table>
-      </Card>
+      <Container>
+        <deckBuilderContext.Provider value={
+          {
+            deckBuilderData,
+            setDeckBuilderData,
+          }
+        }
+        >
+          <Row>
+            <Col>
+              <h1>Decks</h1>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+                <CardList />
+            </Col>
+            <Col>
+            <Card>
+              <Card.Img variant="top" src={cardImageUri()} />
+              <Card.Body>
+                <Card.Title>{deckBuilderData.selectedCard.name}</Card.Title>
+                <Card.Text>{deckBuilderData.selectedCard.oracle_text}</Card.Text>
+              </Card.Body>
+            </Card>
+            </Col>
+            <Col>
+                <CardSearch />
+                <CardList />
+            </Col>
+          </Row>
+        </deckBuilderContext.Provider>
+      </Container>
     </>
   );
 };
