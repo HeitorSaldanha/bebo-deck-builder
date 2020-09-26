@@ -32,14 +32,15 @@ const CardList = () => {
       Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`)
         .then(res => {
           const formatedCards = res.data.data.map((card) => {
-            console.log('Hello');
+            /*console.log('Hello');
             const formatedText = <ManaText text={card.oracle_text}/>;
             return ({
               ...card,
               oracle_text: formatedText
-            })
+            })*/
+            return card;
           });
-          setCardList(formatedCards);
+          setCardList(res.data.data);
           setErrors(null);
         })
         .catch(err => {
@@ -90,7 +91,7 @@ const CardList = () => {
                 {errors.details}
               </ListGroup.Item>
             :
-              cardList.length > 1 ?
+              cardList.length ?
                 cardList.map((card) => {
                   return (
                     <ListGroup.Item
