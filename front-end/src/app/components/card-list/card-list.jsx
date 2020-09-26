@@ -7,6 +7,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import { BsSearch } from 'react-icons/bs';
 
+import ManaText from '../mana-text/mana-text';
 import deckBuilderContext from '../../../context/deck-builder-context';
 import StyledListGroup from './Style';
 
@@ -26,10 +27,19 @@ const CardList = () => {
 
   useEffect(() => {
     setIsLoading(true);
+
     const handleSearch = async () => {
       Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`)
         .then(res => {
-          setCardList(res.data.data);
+          const formatedCards = res.data.data.map((card) => {
+            console.log('Hello');
+            const formatedText = <ManaText text={card.oracle_text}/>;
+            return ({
+              ...card,
+              oracle_text: formatedText
+            })
+          });
+          setCardList(formatedCards);
           setErrors(null);
         })
         .catch(err => {
@@ -37,6 +47,7 @@ const CardList = () => {
           setErrors(err.response.data);
         });
     }
+
     const delayDebounceFn = setTimeout(() => {
         handleSearch();
     }, 1000)
