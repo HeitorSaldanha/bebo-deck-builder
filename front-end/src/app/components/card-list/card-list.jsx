@@ -3,21 +3,20 @@ import Axios from 'axios';
 
 import ListGroup from 'react-bootstrap/ListGroup';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Spinner from 'react-bootstrap/Spinner';
+import { BsSearch } from 'react-icons/bs';
 
 import deckBuilderContext from '../../../context/deck-builder-context';
+import StyledListGroup from './Style';
 
 const CardList = () => {
 
   const [cardList, setCardList] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState(null);
   const {setDeckBuilderData} = useContext(deckBuilderContext);
-
-  const handleSearch = async () => {
-    const cardListResp = await Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`);
-    if (cardListResp.data.object !== 'error') {
-      setCardList(cardListResp.data.data);
-    }
-  }
 
   const selectCard = (card) => {
     setDeckBuilderData({
@@ -26,34 +25,78 @@ const CardList = () => {
   };
 
   useEffect(() => {
-    handleSearch();
-  });
+    setIsLoading(true);
+    const handleSearch = async () => {
+      Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`)
+        .then(res => {
+          setCardList(res.data.data);
+          setErrors(null);
+        })
+        .catch(err => {
+          setCardList([]);
+          setErrors(err.response.data);
+        });
+    }
+    const delayDebounceFn = setTimeout(() => {
+        handleSearch();
+    }, 1000)
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [cardList])
 
   return (
     <>
-    <Form.Group>
-      <Form.Control
-        type="text"
-        placeholder="Normal text"
-        onChange={(e) => {
-          setSearchQuery(e.target.value);
-        }}
-      />
-    </Form.Group>
-      <ListGroup>
+      <Form.Group>
+        <InputGroup>
+          <Form.Control
+            type="text"
+            placeholder="Card Name"
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
+          />
+          <InputGroup.Append>
+            <InputGroup.Text>
+              {
+                <BsSearch />
+              }
+            </InputGroup.Text>
+          </InputGroup.Append>
+        </InputGroup>
+      </Form.Group>
+      <StyledListGroup>
         {
-          cardList.map((card) => {
-            return (
+          isLoading ?
+            <Spinner animation="border" />
+          :
+            errors && searchQuery !== '' ?
               <ListGroup.Item
-                eventKey={card.id}
-                onClick={() => selectCard(card)}
+                variant="danger"
               >
-                {card.name}
+                {errors.details}
               </ListGroup.Item>
-            )
-          })
+            :
+              cardList.length > 1 ?
+                cardList.map((card) => {
+                  return (
+                    <ListGroup.Item
+                      action
+                      eventKey={card.id}
+                      onClick={() => selectCard(card)}
+                    >
+                      {card.name}
+                    </ListGroup.Item>
+                  )
+                })
+              :
+                <ListGroup.Item>
+                  Start typing to search for a card
+                </ListGroup.Item>
         }
-      </ListGroup>
+      </StyledListGroup>
     </>
   );
 }

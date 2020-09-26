@@ -43,7 +43,7 @@ const DecksView = () => {
         >
           <Row>
             <Col>
-              <h1>Decks</h1>
+              <h1>Deck Builder</h1>
             </Col>
           </Row>
           <Row>
@@ -60,8 +60,6 @@ const DecksView = () => {
             </Card>
             </Col>
             <Col>
-                <CardSearch />
-                <CardList />
             </Col>
           </Row>
         </deckBuilderContext.Provider>
