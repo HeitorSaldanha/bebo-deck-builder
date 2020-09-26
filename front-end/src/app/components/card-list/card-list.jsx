@@ -7,7 +7,6 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import { BsSearch } from 'react-icons/bs';
 
-import ManaText from '../mana-text/mana-text';
 import deckBuilderContext from '../../../context/deck-builder-context';
 import StyledListGroup from './Style';
 
@@ -31,15 +30,6 @@ const CardList = () => {
     const handleSearch = async () => {
       Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`)
         .then(res => {
-          const formatedCards = res.data.data.map((card) => {
-            /*console.log('Hello');
-            const formatedText = <ManaText text={card.oracle_text}/>;
-            return ({
-              ...card,
-              oracle_text: formatedText
-            })*/
-            return card;
-          });
           setCardList(res.data.data);
           setErrors(null);
         })
@@ -86,6 +76,7 @@ const CardList = () => {
           :
             errors && searchQuery !== '' ?
               <ListGroup.Item
+                key="error"
                 variant="danger"
               >
                 {errors.details}
@@ -97,6 +88,7 @@ const CardList = () => {
                     <ListGroup.Item
                       action
                       eventKey={card.id}
+                      key={card.id}
                       onClick={() => selectCard(card)}
                     >
                       {card.name}

@@ -5,8 +5,11 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+import Nav from 'react-bootstrap/Nav';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs'
 
-import CardSearch from '../../components/card-search/card-search';
+import ManaText from '../../components/mana-text/mana-text';
 import CardList from '../../components/card-list/card-list';
 import deckBuilderContext from '../../../context/deck-builder-context';
 
@@ -25,9 +28,9 @@ const DecksView = () => {
 
   const cardImageUri = () => {
     if (deckBuilderData.selectedCard.image_uris) {
-      return deckBuilderData.selectedCard.image_uris.art_crop;
+      return deckBuilderData.selectedCard.image_uris.normal;
     } else if (deckBuilderData.selectedCard.card_faces) {
-      return deckBuilderData.selectedCard.card_faces[0].image_uris.art_crop;
+      return deckBuilderData.selectedCard.card_faces[0].image_uris.normal;
     }
   }
 
@@ -51,13 +54,34 @@ const DecksView = () => {
                 <CardList />
             </Col>
             <Col>
-            <Card>
-              <Card.Img variant="top" src={cardImageUri()} />
-              <Card.Body>
-                <Card.Title>{deckBuilderData.selectedCard.name}</Card.Title>
-                <Card.Text>{deckBuilderData.selectedCard.oracle_text}</Card.Text>
-              </Card.Body>
-            </Card>
+              {
+                deckBuilderData.selectedCard.name ?
+                  <Tabs defaultActiveKey="cardPrint">
+                    <Tab
+                      eventKey="cardPrint"
+                      title="Card Print"
+                    >
+                      <Card>
+                        <Card.Img variant="top" src={cardImageUri()} />
+                      </Card>
+                    </Tab>
+                    <Tab
+                      eventKey="cardInfo"
+                      title="Card Info"
+                    >
+                      <Card>
+                        <Card.Header as="h5">{deckBuilderData.selectedCard.name}</Card.Header>
+                        <Card.Body>
+                          <Card.Text>
+                            <ManaText>{deckBuilderData.selectedCard.oracle_text}</ManaText>
+                          </Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Tab>
+                  </Tabs> :
+                <>
+                </>
+              }
             </Col>
             <Col>
             </Col>
