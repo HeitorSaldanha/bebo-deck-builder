@@ -11,16 +11,15 @@ import deckBuilderContext from '../../../context/deck-builder-context';
 import StyledListGroup from './Style';
 
 const CardList = () => {
-
   const [cardList, setCardList] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState(null);
-  const {setDeckBuilderData} = useContext(deckBuilderContext);
+  const { setDeckBuilderData } = useContext(deckBuilderContext);
 
   const selectCard = (card) => {
     setDeckBuilderData({
-      selectedCard: card
+      selectedCard: card,
     });
   };
 
@@ -29,25 +28,59 @@ const CardList = () => {
 
     const handleSearch = async () => {
       Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`)
-        .then(res => {
+        .then((res) => {
           setCardList(res.data.data);
           setErrors(null);
         })
-        .catch(err => {
+        .catch((err) => {
           setCardList([]);
           setErrors(err.response.data);
         });
-    }
+    };
 
     const delayDebounceFn = setTimeout(() => {
-        handleSearch();
-    }, 1000)
+      handleSearch();
+    }, 1000);
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
   useEffect(() => {
     setIsLoading(false);
-  }, [cardList])
+  }, [cardList]);
+
+  const getListGroupItens = () => {
+    let listGroupItens;
+    if (isLoading) {
+      listGroupItens = <Spinner animation="border" />;
+    } else if (errors && searchQuery !== '') {
+      listGroupItens = (
+        <ListGroup.Item
+          key="error"
+          variant="danger"
+        >
+          {errors.details}
+        </ListGroup.Item>
+      );
+    } else if (cardList.length) {
+      listGroupItens = cardList.map((card) => (
+        <ListGroup.Item
+          action
+          eventKey={card.id}
+          key={card.id}
+          onClick={() => selectCard(card)}
+        >
+          {card.name}
+        </ListGroup.Item>
+      ));
+    } else {
+      listGroupItens = (
+        <ListGroup.Item>
+          Start typing to search for a card
+        </ListGroup.Item>
+      );
+    }
+    return listGroupItens;
+  };
 
   return (
     <>
@@ -62,47 +95,16 @@ const CardList = () => {
           />
           <InputGroup.Append>
             <InputGroup.Text>
-              {
-                <BsSearch />
-              }
+              <BsSearch />
             </InputGroup.Text>
           </InputGroup.Append>
         </InputGroup>
       </Form.Group>
       <StyledListGroup>
-        {
-          isLoading ?
-            <Spinner animation="border" />
-          :
-            errors && searchQuery !== '' ?
-              <ListGroup.Item
-                key="error"
-                variant="danger"
-              >
-                {errors.details}
-              </ListGroup.Item>
-            :
-              cardList.length ?
-                cardList.map((card) => {
-                  return (
-                    <ListGroup.Item
-                      action
-                      eventKey={card.id}
-                      key={card.id}
-                      onClick={() => selectCard(card)}
-                    >
-                      {card.name}
-                    </ListGroup.Item>
-                  )
-                })
-              :
-                <ListGroup.Item>
-                  Start typing to search for a card
-                </ListGroup.Item>
-        }
+        { getListGroupItens() }
       </StyledListGroup>
     </>
   );
-}
+};
 
 export default CardList;
