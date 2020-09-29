@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import CardViewer from '../../components/card-viewer/card-viewer';
-import CardList from '../../components/card-list/card-list';
+import CardSearch from '../../components/card-search/card-search';
 import deckBuilderContext from '../../../context/deck-builder-context';
 
 const DecksView = () => {
@@ -38,7 +38,7 @@ const DecksView = () => {
           </Row>
           <Row>
             <Col>
-              <CardList />
+              <CardSearch />
             </Col>
             <Col>
               {

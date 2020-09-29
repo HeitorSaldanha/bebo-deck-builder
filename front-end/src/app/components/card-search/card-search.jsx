@@ -1,64 +1,76 @@
-import React, { useState, Fragment } from 'react';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import React, { useState, useContext, useEffect } from 'react';
+import Axios from 'axios';
+
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import { BsSearch } from 'react-icons/bs';
+
+import CardList from '../card-list/card-list';
+import deckBuilderContext from '../../../context/deck-builder-context';
 
 const CardSearch = () => {
+  const [cardList, setCardSearch] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [errors, setErrors] = useState(null);
+  const { setDeckBuilderData } = useContext(deckBuilderContext);
 
-  const handleSearch = (query) => {
-    setIsLoading(true);
-
-    fetch(`https://api.scryfall.com/cards/search?q=${query}`)
-      .then((resp) => resp.json())
-      .then((result) => {
-        let optionsArr = [];
-        if (result.object !== 'error') {
-          optionsArr = result.data.map((i) => {
-            const card = {
-              name: i.name,
-              id: i.id,
-              image: '',
-            };
-
-            if (i.image_uris) {
-              card.image = i.image_uris.art_crop;
-            } else if (i.card_faces) {
-              card.image = i.card_faces[0].image_uris.art_crop;
-            }
-
-            return card;
-          });
-        }
-
-        setOptions(optionsArr);
-        setIsLoading(false);
-      });
+  const selectCard = (card) => {
+    setDeckBuilderData({
+      selectedCard: card,
+    });
   };
 
+  useEffect(() => {
+    setIsLoading(true);
+
+    const handleSearch = async () => {
+      Axios.get(`https://api.scryfall.com/cards/search?q=${searchQuery}`)
+        .then((res) => {
+          setCardSearch(res.data.data);
+          setErrors(null);
+        })
+        .catch((err) => {
+          setCardSearch([]);
+          setErrors(err.response.data);
+        });
+    };
+
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch();
+    }, 1000);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [cardList]);
+
   return (
-    <AsyncTypeahead
-      id="teste"
-      labelKey="name"
-      isLoading={isLoading}
-      minLength={3}
-      onSearch={handleSearch}
-      options={options}
-      placeholder="Search for a Github user..."
-      renderMenuItemChildren={(option) => (
-        <Fragment key={option.id}>
-          <img
-            alt={option.name}
-            src={option.image}
-            style={{
-              height: '24px',
-              marginRight: '10px',
-              width: '24px',
+    <>
+      <Form.Group>
+        <InputGroup>
+          <Form.Control
+            type="text"
+            placeholder="Card Name"
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
             }}
           />
-          <span>{option.name}</span>
-        </Fragment>
-      )}
-    />
+          <InputGroup.Append>
+            <InputGroup.Text>
+              <BsSearch />
+            </InputGroup.Text>
+          </InputGroup.Append>
+        </InputGroup>
+      </Form.Group>
+      <CardList
+        cards={cardList}
+        errors={errors}
+        isLoading={isLoading}
+        selectCard={selectCard}
+      />
+    </>
   );
 };
 
