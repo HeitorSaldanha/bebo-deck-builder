@@ -6,7 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { BsSearch } from 'react-icons/bs';
 
 import CardList from '../card-list/card-list';
-import deckBuilderContext from '../../../context/deck-builder-context';
+import deckBuilderContext from '../../../../context/deck-builder-context';
 
 const CardSearch = () => {
   const [cardList, setCardSearch] = useState([]);

@@ -19,6 +19,7 @@ const CardList = (props) => {
       {
         !isLoading
         && errors
+        && errors.details
         && (
         <ListGroup.Item
           key="error"
@@ -58,7 +59,7 @@ CardList.propTypes = {
 
 CardList.defaultProps = {
   cards: [],
-  errors: {},
+  errors: null,
   isLoading: false,
   selectCard: (el) => el.active,
 };

@@ -63,7 +63,25 @@ LegalityTable.propTypes = {
     brawl: PropTypes.string,
     duel: PropTypes.string,
     oldschool: PropTypes.string,
-  }).isRequired,
+  }),
+};
+
+LegalityTable.defaultProps = {
+  legalities: {
+    standard: 'No Data',
+    future: 'No Data',
+    historic: 'No Data',
+    pioneer: 'No Data',
+    modern: 'No Data',
+    legacy: 'No Data',
+    pauper: 'No Data',
+    vintage: 'No Data',
+    penny: 'No Data',
+    commander: 'No Data',
+    brawl: 'No Data',
+    duel: 'No Data',
+    oldschool: 'No Data',
+  },
 };
 
 export default LegalityTable;

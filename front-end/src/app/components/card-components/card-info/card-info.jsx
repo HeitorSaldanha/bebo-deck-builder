@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 
-import ManaText from '../mana-text/mana-text';
-import LegalityTable from '../legality-table/legality-table';
+import ManaText from '../../mana-text/mana-text';
+import LegalityTable from '../../legality-table/legality-table';
 
 const CardInfo = (props) => {
   const { card } = props;

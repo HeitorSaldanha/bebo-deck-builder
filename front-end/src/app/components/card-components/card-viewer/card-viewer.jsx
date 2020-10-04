@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Card from 'react-bootstrap/Card';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 import CardInfo from '../card-info/card-info';
 
@@ -27,7 +28,7 @@ const CardViewer = (props) => {
   };
 
   return (
-    <>
+    <Container fluid>
       <Tabs defaultActiveKey="cardPrint">
         <Tab
           eventKey="cardPrint"
@@ -60,7 +61,7 @@ const CardViewer = (props) => {
         </Button>
         )
       }
-    </>
+    </Container>
   );
 };
 
